@@ -20,11 +20,13 @@ Assuming that you installed them to default directory, possibly that is, /usr/lo
 
 1. vim/gedit ~/.bashrc
 2. append the following lines to the end,
+	
 	export USER_LIB=/usr/local/lib/:$USER_LIB
 
 	export USER_INCLUDE=/usr/local/include/:$USER_INCLUDE
 
 	export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH
+
 3. source ~/.bashrc
 4. cd to ZHT src directory
 5. TO COMPILE ZHT/FaBRiQ, RUN
