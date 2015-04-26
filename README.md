@@ -2,6 +2,7 @@
 CloudKonPlus
 
 -------------------SOFTWARE REQUIREMENTS-------------------
+
 Google protocol buffers c binding, VERSION 0.15 or later
 		http://code.google.com/p/protobuf-c/downloads/list
 
@@ -11,10 +12,12 @@ Google protocol buffers c++ binding, VERSION 2.4.1
 
 
 -------------------COMPILE AND INSTALL-------------------
+
 FIRSTLY install Google protocol buffers c++ binding, 
 AND THEN install Google protocol buffers c binding since the latter dependes on the former.
 
 Assuming that you installed them to default directory, possibly that is, /usr/local
+
 1. vim/gedit ~/.bashrc
 2. append the following lines to the end,
 	export USER_LIB=/usr/local/lib/:$USER_LIB
