@@ -14,7 +14,6 @@
 using namespace std;
 ZHTClient zc;
 int threadCount = 0;
-pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
 
 void printUsage(char *argv_0);
 void test_insert();
@@ -22,8 +21,8 @@ void test_pop();
 
 void *execTask(void *popTask)
 {
-	string result, update, task, key, cmd, dataTask[4] = "";
-	int i, k = 0, rc, data;
+	string result, task, key, cmd, data[4] = "";
+	int i, k = 0, rc;
 	char intstr[10];
 
 	task = (char *) popTask;
@@ -33,68 +32,54 @@ void *execTask(void *popTask)
 		if (task[i] == ',')
 			k = k + 1;
 		else
-			dataTask[k] = dataTask[k] + task[i];
+			data[k] = data[k] + task[i];
 		//key = key + task[i];
 	}
 
-	key = dataTask[0];
-	cmd = dataTask[1] + " " + dataTask[2];
+	key = data[0];
+	cmd = data[1] + " " + data[2];
 
-	//rc = system("netstat | grep 50000 | wc -l");
 	rc = system(cmd.c_str());
 
-	pthread_mutex_lock( &mutex1 );
 	if ( rc == 0)
 	{
 		rc = zc.lookup(key, result);
 
 		if ( rc == 0)
 		{
-			data = atoi(result.c_str());
+			int data = atoi(result.c_str());
 			data = data + 1;
 
 			sprintf(intstr, "%d", data);
-			update = string(intstr);
+			result = string(intstr);
 
-			rc = zc.insert(key, update);
+			rc = zc.insert(key, result);
 
 			if (rc == 0)
 				printf("INSERT OK, rc(%d)\n", rc);
-			else
-				printf("INSERT ERR, rc(%d)\n", rc);
 		}
 		else
 		{
 			rc = zc.insert(key, "1");
 		}
 	}
-	else
-	{
-		cout << "Job Failed execution: " << task << endl;
-		cout << "Pushing the failed job back to queue" << endl;
-		rc = zc.push((key + dataTask[3]), task, "1", result);
-
-		if (rc == 0)
-			printf("PUSH OK, rc(%d)\n", rc);
-		else
-			printf("PUSH ERR, rc(%d)\n", rc);
-	}
 	threadCount = threadCount - 1;
-	pthread_mutex_unlock( &mutex1 );
 }
 
 void startWorker(int numThrds)
 {
-	int i, rc, id;
+	int i, rc, id = 1;
 	char intstr[10];
 	pthread_t threads[numThrds];
 	string key, key1, result;
 
 	key1 = getIp();
 
-	id = 1;
 	sprintf(intstr, "%d", id);
-	key = key1 + ":" +string(intstr);
+	key = key1 + string(intstr);
+
+	rc = zc.push("temp", "test", "1", result);
+	rc = zc.pop("temp1", "1", result);
 
 	while (true)
 	{
@@ -106,7 +91,11 @@ void startWorker(int numThrds)
 
 				if (rc == 0)
 				{
-					if ( result.c_str() != NULL && strlen(result.c_str()) > 0)
+					id = id + 1;
+					sprintf(intstr, "%d", id);
+					key = key1 + string(intstr);
+
+					if ( result.c_str() != NULL)
 					{
 						printf("POP OK, rc(%d), value={%s}\n", rc, result.c_str());
 
@@ -118,15 +107,11 @@ void startWorker(int numThrds)
 							exit(-1);
 						}
 
-						id = id + 1;
-						sprintf(intstr, "%d", id);
-						key = key1 + ":" +string(intstr);
-
 						threadCount = threadCount + 1;
 					}
 				}
 				else
-					sleep(10);
+					sleep(5);
 			}
 		}
 		catch(...)
@@ -183,10 +168,6 @@ int main(int argc, char **argv)
 
 			zc.init(zhtConf, neighborConf);
 			
-			string result;
-			zc.push("temp", "test", "1", result);
-			zc.pop("xxxx", "1", result);
-
 			//test_insert();
 
 			//test_pop();
@@ -257,9 +238,8 @@ void test_pop()
 				uuid = string(intstr);
 
 				printf("POP OK, rc(%d), value={%s}\n", rc, result.c_str());
+
 			}
-			else
-				sleep(10);
 		}
 		catch(...)
 		{

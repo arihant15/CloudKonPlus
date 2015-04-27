@@ -17,7 +17,6 @@ ZHTClient zc;
 FILE *fp;
 ifstream infile;
 int taskCount, taskKey;
-string IP;
 struct timeval t;
 
 void openFile(const string &fileName);
@@ -32,8 +31,7 @@ void push(string task)
 	char intstr[10];
 
 	sprintf(intstr, "%d", taskKey);
-	key = IP + string(intstr);
-	//key = getIp() + string(intstr);
+	key = getIp() + string(intstr);
 	
 	rc = zc.push(key, task, "1", result);
 
@@ -86,22 +84,13 @@ void *getResult(void *keyID)
 			printf("LOOKUP OK, rc(%d), value={%s}\n", rc, result.c_str());
 			i = atoi(result.c_str());
 
-			if(strlen(result.c_str()) == 0)
-				break;
-
 			if(i != taskCount)
-				sleep(5);
+				sleep(2);
 		}
 		else
 			sleep(5);
 	}
-	
-	rc = zc.remove(key);
-
-	if (rc == 0)
-		printf("REMOVE OK, rc(%d)\n", rc);
-	else
-		printf("REMOVE ERR, rc(%d)\n", rc);
+	zc.remove(key);
 }
 
 void startClient()
@@ -112,7 +101,6 @@ void startClient()
 	int i, rc;
 	string result, key;
 
-	IP = getIp().c_str();
 	key = getIp();
 
 	//rc = zc.push("temp", "test", "1", result);
@@ -281,12 +269,12 @@ void test_push()
 	string val = "y";
 	string result;
 
-	while(i <= 10000)
+	while(val != "q")
 	{
-		//printf("Enter the value to be pushed,(Enter \"q\" Quit) Value = ");
-		//cin>>val;
-		cout << "UUID: " << uuid << endl;
-		int rc = zc.push(uuid, uuid,"1", result);
+		printf("Enter the value to be pushed,(Enter \"q\" Quit) Value = ");
+		cin>>val;
+		cout << "UUID" << uuid << endl;
+		int rc = zc.push(uuid, val,"1", result);
 
 		if (rc == 0)
 		{
