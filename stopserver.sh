@@ -1,0 +1,2 @@
+killall -r "zhtserver*"
+
