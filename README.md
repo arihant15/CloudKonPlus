@@ -41,11 +41,11 @@ Assuming that you installed them to default directory, possibly that is, /usr/lo
 -------------------RUN CloudKon Worker-------------------
 
 1. $ gcc -g -I -L -DPF_INET -DBIG_MSG -DSOCKET_CACHE -DSCCB -DTSQUEUE -c ckp_worker.cpp -lstdc++ -lrt -lpthread -lm -lc -lprotobuf -lprotobuf-c
-2. $ gcc -g -I -L -DPF_INET -DBIG_MSG -DSOCKET_CACHE -DSCCB -DTSQUEUE -o ckp_worker ckp_worker.o lock_guard.o cpp_zhtclient.o meta.pb-c.o lru_cache.o meta.pb.o zpack.pb.o novoht.o bigdata_transfer.o Const.o ConfHandler.o ConfEntry.o ProxyStubFactory.o proxy_stub.o ip_proxy_stub.o mq_proxy_stub.o ipc_plus.o tcp_proxy_stub.o udp_proxy_stub.o ZHTUtil.o Env.o Util.o HTWorker.o StrTokenizer.o TSafeQueue.o -lstdc++ -lrt -lpthread -lm -lc -lprotobuf -lprotobuf-c
+2. $ gcc -g -I -L -DPF_INET -DBIG_MSG -DSOCKET_CACHE -DSCCB -DTSQUEUE -o ckp_worker ckp_worker.o lock_guard.o cpp_zhtclient.o meta.pb-c.o lru_cache.o meta.pb.o zpack.pb.o novoht.o bigdata_transfer.o Const.o ConfHandler.o ConfEntry.o ProxyStubFactory.o proxy_stub.o ip_proxy_stub.o mq_proxy_stub.o ipc_plus.o tcp_proxy_stub.o udp_proxy_stub.o ZHTUtil.o Env.o Util.o HTWorker.o StrTokenizer.o TSafeQueue.o ipFinder.o -lstdc++ -lrt -lpthread -lm -lc -lprotobuf -lprotobuf-c
 3. $ ./ckp_worker -z zht.conf -n neighbor.conf -t #numThreads
 
 -------------------RUN CloudKon Client-------------------
 
 1. $ gcc -g -I -L -DPF_INET -DBIG_MSG -DSOCKET_CACHE -DSCCB -DTSQUEUE -c ckp_client.cpp -lstdc++ -lrt -lpthread -lm -lc -lprotobuf -lprotobuf-c
-2. $ gcc -g -I -L -DPF_INET -DBIG_MSG -DSOCKET_CACHE -DSCCB -DTSQUEUE -o ckp_client ckp_client.o lock_guard.o cpp_zhtclient.o meta.pb-c.o lru_cache.o meta.pb.o zpack.pb.o novoht.o bigdata_transfer.o Const.o ConfHandler.o ConfEntry.o ProxyStubFactory.o proxy_stub.o ip_proxy_stub.o mq_proxy_stub.o ipc_plus.o tcp_proxy_stub.o udp_proxy_stub.o ZHTUtil.o Env.o Util.o HTWorker.o StrTokenizer.o TSafeQueue.o -lstdc++ -lrt -lpthread -lm -lc -lprotobuf -lprotobuf-c
+2. $ gcc -g -I -L -DPF_INET -DBIG_MSG -DSOCKET_CACHE -DSCCB -DTSQUEUE -o ckp_client ckp_client.o lock_guard.o cpp_zhtclient.o meta.pb-c.o lru_cache.o meta.pb.o zpack.pb.o novoht.o bigdata_transfer.o Const.o ConfHandler.o ConfEntry.o ProxyStubFactory.o proxy_stub.o ip_proxy_stub.o mq_proxy_stub.o ipc_plus.o tcp_proxy_stub.o udp_proxy_stub.o ZHTUtil.o Env.o Util.o HTWorker.o StrTokenizer.o TSafeQueue.o ipFinder.o -lstdc++ -lrt -lpthread -lm -lc -lprotobuf -lprotobuf-c
 3. $ ./ckp_client -z zht.conf -n neighbor.conf -w TestCase.txt
