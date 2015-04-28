@@ -47,6 +47,7 @@ void *execTask(void *popTask)
 	if ( rc == 0)
 	{
 		rc = zc.lookup(key, result);
+		cout << "Lookup Result: " << (atoi(result.c_str()) - 1000) << endl;
 
 		if ( rc == 0)
 		{
@@ -57,6 +58,7 @@ void *execTask(void *popTask)
 			update = string(intstr);
 
 			rc = zc.insert(key, update);
+			cout << "Updating the Key with the Value: " << (atoi(update.c_str()) - 1000) << endl;
 
 			if (rc == 0)
 				printf("INSERT OK, rc(%d)\n", rc);
@@ -65,14 +67,14 @@ void *execTask(void *popTask)
 		}
 		else
 		{
-			rc = zc.insert(key, "1");
+			rc = zc.insert(key, "1001");
 		}
 	}
 	else
 	{
 		cout << "Job Failed execution: " << task << endl;
 		cout << "Pushing the failed job back to queue" << endl;
-		rc = zc.push((key + dataTask[3]), task, "1", result);
+		rc = zc.push((key + ".x" +dataTask[3]), task, "q1", result);
 
 		if (rc == 0)
 			printf("PUSH OK, rc(%d)\n", rc);
@@ -94,7 +96,7 @@ void startWorker(int numThrds)
 
 	id = 1;
 	sprintf(intstr, "%d", id);
-	key = key1 + ":" +string(intstr);
+	key = string(intstr) + "." + key1;
 
 	while (true)
 	{
@@ -102,7 +104,7 @@ void startWorker(int numThrds)
 		{
 			if(threadCount < numThrds)
 			{
-				rc = zc.pop(key, "1", result);
+				rc = zc.pop(key, "q1", result);
 
 				if (rc == 0)
 				{
@@ -183,9 +185,10 @@ int main(int argc, char **argv)
 
 			zc.init(zhtConf, neighborConf);
 			
+			cout << "Initializing Worker" << endl;
 			string result;
-			zc.push("temp", "test", "1", result);
-			zc.pop("xxxx", "1", result);
+			zc.push("temp", "test", "q1", result);
+			zc.pop("xxxx", "q1", result);
 
 			//test_insert();
 
@@ -248,7 +251,7 @@ void test_pop()
 		cout << "UUID" << uuid << endl;
 		try
 		{
-			rc = zc.pop(uuid, "1", result);
+			rc = zc.pop(uuid, "q1", result);
 
 			if (rc == 0)
 			{

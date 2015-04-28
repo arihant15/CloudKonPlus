@@ -32,10 +32,10 @@ void push(string task)
 	char intstr[10];
 
 	sprintf(intstr, "%d", taskKey);
-	key = IP + string(intstr);
+	key = IP + "." + string(intstr);
 	//key = getIp() + string(intstr);
 	
-	rc = zc.push(key, task, "1", result);
+	rc = zc.push(key, task, "q1", result);
 
 	if (rc == 0)
 		printf("PUSH OK, rc(%d)\n", rc);
@@ -77,19 +77,19 @@ void *getResult(void *keyID)
 	string result;
 	int rc, i = 0;
 
-	while(i != taskCount)
+	while((i - 1000) != taskCount)
 	{
 		rc = zc.lookup(key, result);
 
 		if (rc == 0)
 		{
-			printf("LOOKUP OK, rc(%d), value={%s}\n", rc, result.c_str());
+			printf("LOOKUP OK, rc(%d), value={%d}\n", rc, (atoi(result.c_str()) - 1000));
 			i = atoi(result.c_str());
 
 			if(strlen(result.c_str()) == 0)
 				break;
 
-			if(i != taskCount)
+			if((i - 1000) != taskCount)
 				sleep(5);
 		}
 		else
@@ -115,8 +115,8 @@ void startClient()
 	IP = getIp().c_str();
 	key = getIp();
 
-	//rc = zc.push("temp", "test", "1", result);
-	//rc = zc.pop("temp1", "1", result);
+	//rc = zc.push("temp", "test", "q1", result);
+	//rc = zc.pop("temp1", "q1", result);
 
 	start = clock();
 	gettimeofday(&t, NULL);
@@ -149,8 +149,8 @@ void startClient()
 	end = clock();
 
 	cout << "########################################################" << endl;
-	cout << "Wall Time: " << ((double)(end - start))/CLOCKS_PER_SEC << " sec" << endl;
-	cout << "Wall Time2: " << t_t << " sec" << endl;
+	//cout << "Wall Time: " << ((double)(end - start))/CLOCKS_PER_SEC << " sec" << endl;
+	cout << "Wall Time: " << t_t << " sec" << endl;
 	cout << "########################################################" << endl;
 }
 
@@ -286,7 +286,7 @@ void test_push()
 		//printf("Enter the value to be pushed,(Enter \"q\" Quit) Value = ");
 		//cin>>val;
 		cout << "UUID: " << uuid << endl;
-		int rc = zc.push(uuid, uuid,"1", result);
+		int rc = zc.push(uuid, uuid,"q1", result);
 
 		if (rc == 0)
 		{
