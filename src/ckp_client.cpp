@@ -113,7 +113,7 @@ void startClient()
 	string result, key;
 
 	IP = getIp().c_str();
-	key = getIp();
+	key = getIp() + ".AAIS";
 
 	//rc = zc.push("temp", "test", "q1", result);
 	//rc = zc.pop("temp1", "q1", result);
