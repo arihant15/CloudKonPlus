@@ -94,7 +94,7 @@ void startWorker(int numThrds)
 
 	key1 = getIp();
 
-	id = 1;
+	id = 1000;
 	sprintf(intstr, "%d", id);
 	key = string(intstr) + "." + key1;
 
@@ -120,21 +120,28 @@ void startWorker(int numThrds)
 							exit(-1);
 						}
 
-						id = id + 1;
-						sprintf(intstr, "%d", id);
-						key = key1 + ":" +string(intstr);
+						//id = id + 1;
+						//sprintf(intstr, "%d", id);
+						//key = string(intstr) + "." + key1;
 
 						threadCount = threadCount + 1;
 					}
 				}
 				else
+				{
+					printf("POP ERR, rc(%d), value={%s}\n", rc, result.c_str());
 					sleep(10);
+				}
 			}
 		}
 		catch(...)
 		{
 			sleep(10);
 		}
+		
+		id = id + 1;
+                sprintf(intstr, "%d", id);
+                key = string(intstr) + "." + key1;
 	}
 
 	cout << "Worker completed" << endl;
