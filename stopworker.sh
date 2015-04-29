@@ -1,1 +1,1 @@
-killall -r "ckp_worker"
+killall -r "ckp_worker*"

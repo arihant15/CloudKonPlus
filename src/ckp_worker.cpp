@@ -130,13 +130,13 @@ void startWorker(int numThrds)
 				else
 				{
 					printf("POP ERR, rc(%d), value={%s}\n", rc, result.c_str());
-					sleep(10);
+					sleep(5);
 				}
 			}
 		}
 		catch(...)
 		{
-			sleep(10);
+			sleep(5);
 		}
 		
 		id = id + 1;
