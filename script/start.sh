@@ -1,4 +1,3 @@
-#!/bin/sh
 sudo ldconfig
 
 fusionfs fusion_root fusion_mount $HOME/CloudKonPlus/conf/neighbor.conf  $HOME/CloudKonPlus/conf/zht.conf

@@ -1,4 +1,3 @@
-#!/bin/sh
 sudo ldconfig
 
 fusermount -u $HOME/CloudKonPlus/script/fusion_mount
