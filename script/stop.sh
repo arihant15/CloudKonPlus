@@ -1,5 +1,5 @@
 #!/bin/sh
 sudo ldconfig
 
-fusermount -u fusion_mount
-rm fusionfs.log fusion_mount/* fusion_root/* -rf
+fusermount -u $HOME/CloudKonPlus/script/fusion_mount
+rm fusionfs.log $HOME/CloudKonPlus/script/fusion_mount/* $HOME/CloudKonPlus/script/fusion_root/* -rf
