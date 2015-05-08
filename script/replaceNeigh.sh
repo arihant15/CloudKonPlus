@@ -13,4 +13,4 @@ java Change1 ~/CloudKonPlus/script/neighbor.txt 50000 #60000 70000 80000
 
 cat neighbor.conf
 ## sending changed value to all server
-parallel-scp -h neighbor.txt -x "-o StrictHostKeyChecking=no -i DIC_CKP.pem" neighbor.conf ~/CloudKonPlus/conf/
+parallel-scp -h neighbor.txt -x "-o StrictHostKeyChecking=no -i DIC_CKP.pem" neighbor.conf $HOME/CloudKonPlus/conf/
