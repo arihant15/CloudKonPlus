@@ -11,6 +11,9 @@
 #include <string>
 #include <exception>
 #include <fstream>
+#include <sys/types.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 using namespace std;
 ZHTClient zc;
@@ -24,6 +27,7 @@ void openFile(const string &fileName);
 void printUsage(char *argv_0);
 void test_lookup();
 void test_push();
+void error(const char *msg);
 
 void push(string task) 
 {
@@ -73,35 +77,44 @@ void *pushTask(void *keyID)
 
 void *getResult(void *keyID)
 {
-	string key = (char *) keyID;
-	string result;
-	int rc, i = 0;
+	int sockfd, newsockfd, portno, n, messageCount = 0;
+	socklen_t clilen;
+	char buffer[256];
+	struct sockaddr_in serv_addr, cli_addr;
 
-	while((i - 1000) != taskCount)
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) 
+    	error("ERROR opening socket");
+
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    portno = 30000;
+
+    serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(portno);
+
+	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
+		error("ERROR on binding");
+
+	while((messageCount - 1000) != taskCount)
 	{
-		rc = zc.lookup(key, result);
+		listen(sockfd,5);
+		clilen = sizeof(cli_addr);
+		newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr,&clilen);
 
-		if (rc == 0)
-		{
-			printf("LOOKUP OK, rc(%d), value={%d}\n", rc, (atoi(result.c_str()) - 1000));
-			i = atoi(result.c_str());
+		if (newsockfd < 0) 
+			error("ERROR on accept");
 
-			if(strlen(result.c_str()) == 0)
-				break;
+		bzero(buffer,256);
+		n = read(newsockfd,buffer,255);
 
-			if((i - 1000) != taskCount)
-				sleep(5);
-		}
-		else
-			sleep(5);
-	}
-	
-	rc = zc.remove(key);
-
-	if (rc == 0)
-		printf("REMOVE OK, rc(%d)\n", rc);
-	else
-		printf("REMOVE ERR, rc(%d)\n", rc);
+		int temp =  atoi(buffer);
+     	messageCount += temp;
+     	printf("the count is %i\n",messageCount - 1000);
+    }
+    
+    close(newsockfd);
+	close(sockfd);
 }
 
 void startClient()
@@ -113,7 +126,7 @@ void startClient()
 	string result, key;
 
 	IP = getIp().c_str();
-	key = getIp() + ".AAIS";
+	key = getIp();
 
 	//rc = zc.push("temp", "test", "q1", result);
 	//rc = zc.pop("temp1", "q1", result);
@@ -250,6 +263,12 @@ void printUsage(char *argv_0)
 	fprintf(stdout, "Usage:\n%s %s\n", argv_0, "-z zht.conf -n neighbor.conf -w <fileName> [-h(help)]");
 }
 
+void error(const char *msg)
+{
+    perror(msg);
+    exit(1);
+}
+
 void test_lookup() 
 {
 	string key = "response";
@@ -300,33 +319,3 @@ void test_push()
 			printf("PUSH ERR, rc(%d)\n", rc);
 	}
 }
-
-/*
-int mac = system("ifconfig eth0 | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'");
-char intstr[10];
-sprintf(intstr, "%d", mac);
-string key = exec("ifconfig eth0 | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'");
-
-while ( getline(infile, task) )
-{
-	cout << "Task: " << task << "\n";
-
-	system(task.c_str());
-}
-
-string exec(string cmd) 
-{
-	int i;
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) return "ERROR";
-
-    char buffer[10];
-    string result = "";
-
-    while(fgets(buffer, 10, pipe) != NULL)
-			result += buffer;
-
-    pclose(pipe);
-    return result;
-}
-*/

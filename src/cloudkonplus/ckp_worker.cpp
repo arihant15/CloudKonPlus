@@ -10,6 +10,11 @@
 #include <string>
 #include <exception>
 #include <fstream>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <unistd.h>
 
 using namespace std;
 ZHTClient zc;
@@ -20,6 +25,7 @@ pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
 void printUsage(char *argv_0);
 void test_insert();
 void test_pop();
+void error(const char *msg);
 
 void *execTask(void *popTask)
 {
@@ -54,7 +60,7 @@ void *execTask(void *popTask)
 		cout << "Pushing the failed job back to queue" << endl;
 		id = id + 1;
 		sprintf(intstr, "%d", id);
-		rc = zc.push((key + "." + string(intstr) +dataTask[3]), task, "q1", result);
+		rc = zc.push((key + "." + string(intstr) + dataTask[3]), task, "q1", result);
 
 		if (rc == 0)
 			printf("PUSH OK, rc(%d)\n", rc);
@@ -63,6 +69,54 @@ void *execTask(void *popTask)
 	}
 	threadCount = threadCount - 1;
 	//pthread_mutex_unlock( &mutex1 );
+}
+
+void sendResult()
+{
+    int sockfd, portno, n;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+
+    char buffer[256];
+    portno = 30000;
+    
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) 
+        error("ERROR opening socket");
+    
+    //char ip[strlen(zht_key.c_str())];
+    //sprintf(ip, "%s", zht_key.c_str());
+    //server->h_name = (char *)zht_key.c_str();
+    server = gethostbyname(zht_key.c_str());
+    
+    if (server == NULL)
+    {
+        fprintf(stderr,"ERROR, no such host\n");
+        exit(0);
+    }
+    
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    
+    serv_addr.sin_family = AF_INET;
+    
+    bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+    serv_addr.sin_port = htons(portno);
+    
+    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
+        error("ERROR connecting");
+    
+    bzero(buffer,256);
+    
+    char tempBuff[10];
+    sprintf(tempBuff,"%d", job_count);
+    
+    //fgets(buffer,255,tempBuff);
+
+	n = write(sockfd,tempBuff,strlen(tempBuff));
+    if (n < 0) 
+         error("ERROR writing to socket");
+    bzero(buffer,256);
+    close(sockfd);
 }
 
 void startWorker(int numThrds)
@@ -109,39 +163,9 @@ void startWorker(int numThrds)
 					if(strcmp(zht_key.c_str(),"xxx") != 0)
 					{
 						pthread_mutex_lock( &mutex1 );
-						rc = zc.lookup(zht_key, result);
-						cout << "Lookup Result: " << (atoi(result.c_str()) - 1000) << endl;
-
-						if ( rc == 0)
-						{
-							int temp;
-							string update;
-							temp = atoi(result.c_str());
-							job_count = job_count + temp - 1000;
-
-							sprintf(intstr, "%d", job_count);
-							update = string(intstr);
-
-							rc = zc.insert(zht_key, update);
-							cout << "Updating the Key with the Value: " << (atoi(update.c_str()) - 1000) << endl;
-
-							if (rc == 0)
-							{
-								printf("INSERT OK, rc(%d)\n", rc);
-								zht_key = "xxx";
-								job_count = 1000;
-							}
-							else
-								printf("INSERT ERR, rc(%d)\n", rc);
-						}
-						else
-						{
-							sprintf(intstr, "%d", job_count);
-							rc = zc.insert(zht_key, string(intstr));
-							cout << "Updating the Key with the Value: " << (job_count - 1000) << endl;
-							zht_key = "xxx";
-							job_count = 1000;
-						}
+						sendResult();
+						zht_key = "xxx";
+						job_count = 1000;
 						pthread_mutex_unlock( &mutex1 );
 					}
 					else
@@ -240,6 +264,12 @@ int main(int argc, char **argv)
 void printUsage(char *argv_0) 
 {
 	fprintf(stdout, "Usage:\n%s %s\n", argv_0, "-z zht.conf -n neighbor.conf -t #threads [-h(help)]");
+}
+
+void error(const char *msg)
+{
+    perror(msg);
+    exit(0);
 }
 
 void test_insert() 
