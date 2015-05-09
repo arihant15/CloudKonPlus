@@ -108,7 +108,7 @@ void sendResult()
     bzero(buffer,256);
     
     char tempBuff[10];
-    sprintf(tempBuff,"%d", job_count);
+    sprintf(tempBuff,"%d", (job_count-1000));
     
     //fgets(buffer,255,tempBuff);
 

@@ -96,7 +96,7 @@ void *getResult(void *keyID)
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
 		error("ERROR on binding");
 
-	while((messageCount - 1000) != taskCount)
+	while(messageCount != taskCount)
 	{
 		listen(sockfd,5);
 		clilen = sizeof(cli_addr);
@@ -110,7 +110,7 @@ void *getResult(void *keyID)
 
 		int temp =  atoi(buffer);
      	messageCount += temp;
-     	printf("the count is %i\n",messageCount - 1000);
+     	printf("the count is %i\n",messageCount);
     }
     
     close(newsockfd);
