@@ -19,7 +19,7 @@ using namespace std;
 ZHTClient zc;
 FILE *fp;
 ifstream infile;
-int taskCount, taskKey;
+int taskCount, taskKey, messageCount = 0;
 string IP;
 struct timeval t;
 
@@ -77,7 +77,7 @@ void *pushTask(void *keyID)
 
 void *getResult(void *keyID)
 {
-	int sockfd, newsockfd, portno, n, messageCount = 0;
+	int sockfd, newsockfd, portno, n;
 	socklen_t clilen;
 	char buffer[256];
 	struct sockaddr_in serv_addr, cli_addr;
