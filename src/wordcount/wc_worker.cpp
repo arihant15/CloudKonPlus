@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 
 			ClientApi::metricData.counter = 1;
 			ClientApi::metricData.workerName = getIp().c_str();
-			ClientApi::metricData.workerId = getIp().c_str();
+			ClientApi::metricData.workerId = getIp() + "_wordcount";
 			ClientApi::metricData.state = "0";
 			ClientApi::metricData.tags.push_back("monitor");
 			ClientApi::workerFile.open(ClientApi::metricData.workerId + ".csv", ios::in);
