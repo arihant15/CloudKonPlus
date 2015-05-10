@@ -1,4 +1,4 @@
 sudo ldconfig
-#pkill ffsnetd
+pkill ffsnetd
 pkill ckp_worker
 pkill zhtserver
