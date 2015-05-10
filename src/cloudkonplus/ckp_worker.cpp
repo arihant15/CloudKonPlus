@@ -171,7 +171,7 @@ void startWorker(int numThrds)
 					else
 					{
 						job_count = 1000;
-						//sleep(5);
+						sleep(3);
 					}
 				}
 			}
