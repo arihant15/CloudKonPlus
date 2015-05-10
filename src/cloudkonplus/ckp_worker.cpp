@@ -236,8 +236,8 @@ int main(int argc, char **argv)
 			
 			cout << "Initializing Worker" << endl;
 			string result;
-			zc.push("temp", "test", "q1", result);
-			zc.pop("xxxx", "q1", result);
+	//		zc.push("temp", "test", "q1", result);
+	//		zc.pop("xxxx", "q1", result);
 			id = 1000;
 			job_count = 1000;
 			//test_insert();
