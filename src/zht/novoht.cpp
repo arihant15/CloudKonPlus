@@ -25,7 +25,7 @@
 #include <pthread.h>
 #include "novoht.h"
 #define DEBUG	TRUE
-pthread_mutex_t mutex12 = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t mutex12 = PTHREAD_MUTEX_INITIALIZER;
 
 NoVoHT::NoVoHT() {
 	initialize("", 1000, -1, 0);
@@ -78,7 +78,7 @@ int NoVoHT::put(string k, string v) {
 	//int semv;
 	//sem_getvalue(&map_lock, &semv);
 	//printf("semv = %d\n", semv);
-	pthread_mutex_lock( &mutex12 );
+//	pthread_mutex_lock( &mutex12 );
 	sem_wait(&map_lock);
 	if (numEl >= size * resizeNum) {
 		if (resizeNum != 0) {
@@ -98,7 +98,7 @@ int NoVoHT::put(string k, string v) {
 		numEl++;
 		//map_lock = false;
 		sem_post(&map_lock);
-		pthread_mutex_unlock( &mutex12 );
+//		pthread_mutex_unlock( &mutex12 );
 		return write(add);
 	}
 	while (cur->next != NULL) {
@@ -108,7 +108,7 @@ int NoVoHT::put(string k, string v) {
 			delete add;
 			//map_lock = false;
 			sem_post(&map_lock);
-			pthread_mutex_unlock( &mutex12 );
+//			pthread_mutex_unlock( &mutex12 );
 			return write(cur);
 		}
 		cur = cur->next;
@@ -119,14 +119,14 @@ int NoVoHT::put(string k, string v) {
 		delete add;
 		//map_lock = false;
 		sem_post(&map_lock);
-		pthread_mutex_unlock( &mutex12 );
+//		pthread_mutex_unlock( &mutex12 );
 		return write(cur);
 	}
 	cur->next = add;
 	numEl++;
 	//map_lock = false;
 	sem_post(&map_lock);
-	pthread_mutex_unlock( &mutex12 );
+//	pthread_mutex_unlock( &mutex12 );
 	return write(add);
 }
 

@@ -46,7 +46,7 @@
 #include "Util.h"
 //#include "ipFinder.h"
 using namespace iit::datasys::zht::dm;
-pthread_mutex_t mutex11 = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t mutex11 = PTHREAD_MUTEX_INITIALIZER;
 //Duplicated from ip_proxy_stub.cpp
 int loopedrecv(int sock, void *senderAddr, string &srecv) {
 
@@ -310,25 +310,25 @@ int ZHTClient::fetch_node(const string &key, string &result) {
 }
 
 int ZHTClient::lookup(const string &key, string &result) {
-	pthread_mutex_lock( &mutex11 );
+	//pthread_mutex_lock( &mutex11 );
 	string val;
 	string val2;
 	int rc = commonOp(Const::ZSC_OPC_LOOKUP, key, val, val2, result, 1);
 
 	result = extract_value(result);
-	pthread_mutex_unlock( &mutex11 );
+	//pthread_mutex_unlock( &mutex11 );
 	return rc;
 }
 
 int ZHTClient::lookup(const char *key, char *result) {
-	pthread_mutex_lock( &mutex11 );
+	//pthread_mutex_lock( &mutex11 );
 	string skey(key);
 	string sresult;
 
 	int rc = lookup(skey, sresult);
 
 	strncpy(result, sresult.c_str(), sresult.size() + 1);
-	pthread_mutex_unlock( &mutex11 );
+	//pthread_mutex_unlock( &mutex11 );
 	return rc;
 }
 
@@ -366,41 +366,41 @@ int ZHTClient::create_queue(const char *key, const char *val) {
 	return rc;
 }
 int ZHTClient::insert(const string &key, const string &val) {
-	pthread_mutex_lock( &mutex11 );
+	//pthread_mutex_lock( &mutex11 );
 	string val2;
 	string result;
         //cout<<key<<endl;
 	int rc = commonOp(Const::ZSC_OPC_INSERT, key, val, val2, result, 1);
-	pthread_mutex_unlock( &mutex11 );
+	//pthread_mutex_unlock( &mutex11 );
 	return rc;
 }
 
 int ZHTClient::insert(const char *key, const char *val) {
-	pthread_mutex_lock( &mutex11 );
+	//pthread_mutex_lock( &mutex11 );
 	string skey(key);
 	string sval(val);
 
 	int rc = insert(skey, sval);
-	pthread_mutex_unlock( &mutex11 );
+	//pthread_mutex_unlock( &mutex11 );
 	return rc;
 }
 
 int ZHTClient::append(const string &key, const string &val) {
-	pthread_mutex_lock( &mutex11 );
+	//pthread_mutex_lock( &mutex11 );
 	string val2;
 	string result;
 	int rc = commonOp(Const::ZSC_OPC_APPEND, key, val, val2, result, 1);
-	pthread_mutex_unlock( &mutex11 );
+	//pthread_mutex_unlock( &mutex11 );
 	return rc;
 }
 
 int ZHTClient::append(const char *key, const char *val) {
-	pthread_mutex_lock( &mutex11 );
+	//pthread_mutex_lock( &mutex11 );
 	string skey(key);
 	string sval(val);
 
 	int rc = append(skey, sval);
-	pthread_mutex_unlock( &mutex11 );
+	//pthread_mutex_unlock( &mutex11 );
 	return rc;
 }
 

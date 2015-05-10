@@ -1,6 +1,6 @@
 ##getting all the ips from amazon
 echo "getting all the ip from the aws"
-aws ec2 describe-instances --filters "Name=instance-type,Values=t2.medium" | awk '{print $4}' | grep 172.>neighbor.txt
+aws ec2 describe-instances --filters "Name=instance-type,Values=t2.medium" | awk '{print $4}' | grep "172.31">neighbor.txt
 ##aremoving all the conf file
 echo "removing any neghbor.conf file"
 rm -rf neighbor.conf
