@@ -1,5 +1,7 @@
 #include "../zht/cpp_zhtclient.h"
 #include "../zht/ZHTUtil.h"
+#include "../monitoring-client/mclient.h"
+#include "../monitoring-client/restclient.h"
 
 #include <getopt.h>
 #include <stdlib.h>
@@ -15,12 +17,19 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <thread>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
+
 ZHTClient zc;
 int threadCount = 0, id, job_count;
 string zht_key = "xxx";
 pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
+
+// monitoring client
+ClientApi cm;
 
 void printUsage(char *argv_0);
 void test_insert();
@@ -29,6 +38,9 @@ void error(const char *msg);
 
 void *execTask(void *popTask)
 {
+	ClientApi::metricData.state = "1";
+	cm.sendMetrics();
+
 	string result, update, task, key, cmd, dataTask[4] = "";
 	int i, k = 0, rc, data;
 	char intstr[10];
@@ -68,6 +80,8 @@ void *execTask(void *popTask)
 			printf("PUSH ERR, rc(%d)\n", rc);
 	}
 	threadCount = threadCount - 1;
+	ClientApi::metricData.state = "0";
+	cm.sendMetrics();
 	//pthread_mutex_unlock( &mutex1 );
 }
 
@@ -171,7 +185,7 @@ void startWorker(int numThrds)
 					else
 					{
 						job_count = 1000;
-						sleep(3);
+						sleep(5);
 					}
 				}
 			}
@@ -236,10 +250,27 @@ int main(int argc, char **argv)
 			
 			cout << "Initializing Worker" << endl;
 			string result;
-	//		zc.push("temp", "test", "q1", result);
-	//		zc.pop("xxxx", "q1", result);
+			zc.push("temp", "test", "q1", result);
+			zc.pop("xxxx", "q1", result);
 			id = 1000;
 			job_count = 1000;
+
+			ClientApi::metricData.counter = 1;
+			ClientApi::metricData.workerName = getIp().c_str();
+			ClientApi::metricData.workerId = getIp() + "_sleep";
+			ClientApi::metricData.state = "0";
+			ClientApi::metricData.tags.push_back("monitor");
+			ClientApi::workerFile.open(ClientApi::metricData.workerId + ".csv", ios::in);
+
+			if (ClientApi::workerFile.is_open()) {
+			  ClientApi::workerFile.close();
+			  ClientApi::workerFile.open(ClientApi::metricData.workerId + ".csv", ios::app);
+			  //cout << "hi pls create" << endl;
+			} else {
+			  ClientApi::workerFile.open(ClientApi::metricData.workerId + ".csv", ios::app);
+			  ClientApi::workerFile << "count,latency" << endl;
+			  //cout << "hi pls create na" << endl;
+			}
 			//test_insert();
 
 			//test_pop();
