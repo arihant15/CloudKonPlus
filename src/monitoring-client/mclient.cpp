@@ -47,7 +47,7 @@ void ClientApi::sendM() {
   }
   //this->replaceSpace(tags);
   
-  RestClient::response r = RestClient::get("http://ec2-52-5-11-81.compute-1.amazonaws.com:8080/MonitoringService/api/mservice?name=" + worker + "&workerId=" + workerId + "&state=" + state + "&timeStamp=" + timestamp + tags);
+  RestClient::response r = RestClient::get("http://52.5.50.144:8080/MonitoringService/api/mservice?name=" + worker + "&workerId=" + workerId + "&state=" + state + "&timeStamp=" + timestamp + tags);
    
   std::cout << "response received: '" << r.code << "'\n";
 
