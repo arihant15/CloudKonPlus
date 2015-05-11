@@ -60,9 +60,9 @@ void *execTask(void *popTask)
 	key = dataTask[0];
 	filename = dataTask[1];
 
-	chdir("/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/script/fusion_mount");
+	chdir("/home/ubuntu/CloudKonPlus/script/fusion_mount");
 
-	cmd = "/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/src/wordcount/wc_script.sh " + filename +" sim_" +filename;
+	cmd = "/home/ubuntu/CloudKonPlus/src/wordcount/wc_script.sh " + filename +" sim_" +filename;
 
 	rc = system(cmd.c_str());
 	zht_key = key;
@@ -86,7 +86,7 @@ void *execTask(void *popTask)
 			printf("PUSH ERR, rc(%d)\n", rc);
 	}
 	threadCount = threadCount - 1;
-	chdir("/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/script");
+	chdir("/home/ubuntu/CloudKonPlus/script");
 	ClientApi::metricData.state = "0";
 	cm.sendMetrics();
 	//pthread_mutex_unlock( &mutex1 );

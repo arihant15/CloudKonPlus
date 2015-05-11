@@ -32,15 +32,14 @@ void test_push();
 string exec(string cmd);
 void error(const char *msg);
 
-void push(string task) 
-{
+void push(string task) {
 	int rc;
 	string key, result;
 	char intstr[10];
 
 	sprintf(intstr, "%d", taskKey);
 	key = IP + "." + string(intstr);
-	
+
 	rc = zc.push(key, task, "q1", result);
 
 	if (rc == 0)
@@ -51,8 +50,7 @@ void push(string task)
 	taskKey = taskKey + 1;
 }
 
-void *pushTask(void *keyID)
-{
+void *pushTask(void *keyID) {
 	int rc, count = 1;
 	string key, task, read3;
 	char intstr[10];
@@ -64,30 +62,28 @@ void *pushTask(void *keyID)
 	DIR *dpdf;
 	struct dirent *epdf;
 
-	dpdf = opendir("/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/script/fusion_mount");
-	if (dpdf != NULL)
-	{
-	   while (epdf = readdir(dpdf))
-	   {
-	   		if(strcmp(epdf->d_name,".") != 0 && strcmp(epdf->d_name,"..") != 0 && strncmp(epdf->d_name,"x",0) == 0)
-	   		{
-	   			sprintf(intstr, "%d", count);
+	dpdf = opendir("/home/ubuntu/CloudKonPlus/script/fusion_mount");
+	if (dpdf != NULL) {
+		while (epdf = readdir(dpdf)) {
+			if (strcmp(epdf->d_name, ".") != 0
+					&& strcmp(epdf->d_name, "..") != 0
+					&& strncmp(epdf->d_name, "x", 0) == 0) {
+				sprintf(intstr, "%d", count);
 				read3 = string(intstr);
-	   			//cout << "Filename: " << epdf->d_name << endl;
-	   			task = key + "," + epdf->d_name + "," + read3;
-	   			cout << "Task: " << task << endl;
-	   			push(task);
+				//cout << "Filename: " << epdf->d_name << endl;
+				task = key + "," + epdf->d_name + "," + read3;
+				cout << "Task: " << task << endl;
+				push(task);
 				count = count + 1;
-	   		}
-	   }
+			}
+		}
 	}
 
 	cout << "******** pushTask End ********" << endl;
 
 }
 
-void *getResult(void *keyID)
-{
+void *getResult(void *keyID) {
 	int sockfd, newsockfd, portno, n, rc;
 	string cmd;
 	socklen_t clilen;
@@ -95,55 +91,52 @@ void *getResult(void *keyID)
 	struct sockaddr_in serv_addr, cli_addr;
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) 
-    	error("ERROR opening socket");
+	if (sockfd < 0)
+		error("ERROR opening socket");
 
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    portno = 30000;
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	portno = 30000;
 
-    serv_addr.sin_family = AF_INET;
+	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(portno);
 
-	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
+	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		error("ERROR on binding");
 
-	while(messageCount != taskCount)
-	{
-		listen(sockfd,5);
+	while (messageCount != taskCount) {
+		listen(sockfd, 5);
 		clilen = sizeof(cli_addr);
-		newsockfd = accept(sockfd,(struct sockaddr *) &cli_addr,&clilen);
+		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 
-		if (newsockfd < 0) 
+		if (newsockfd < 0)
 			error("ERROR on accept");
 
-		bzero(buffer,256);
-		n = read(newsockfd,buffer,255);
+		bzero(buffer, 256);
+		n = read(newsockfd, buffer, 255);
 
-		int temp =  atoi(buffer);
-     	messageCount += temp;
-     	printf("the count is %i\n",messageCount);
-    }
+		int temp = atoi(buffer);
+		messageCount += temp;
+		printf("the count is %i\n", messageCount);
+	}
 
-    cout << "Merging the output... " << endl;
-    chdir("/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/script/fusion_mount");
-    cmd = "/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/src/wordcount/wc_merge.sh";
+	cout << "Merging the output... " << endl;
+	chdir("/home/ubuntu/CloudKonPlus/script/fusion_mount");
+	cmd = "/home/ubuntu/CloudKonPlus/src/wordcount/wc_merge.sh";
 
 	rc = system(cmd.c_str());
 
-	if(rc == 0)
-	{
+	if (rc == 0) {
 		rc = system("rm -rf x*");
 		rc = system("rm -rf sim_*");
 		cout << "Output File present in the location: CloudKonPlus/script/fusion_mount/output.txt" << endl;
 	}
-    
-    close(newsockfd);
+
+	close(newsockfd);
 	close(sockfd);
 }
 
-void startClient()
-{
+void startClient() {
 	clock_t start, end;
 	double s_t, e_t, t_t;
 	pthread_t threads[2];
@@ -155,31 +148,28 @@ void startClient()
 
 	start = clock();
 	gettimeofday(&t, NULL);
-	s_t = t.tv_sec+(t.tv_usec/1000000.0);
+	s_t = t.tv_sec + (t.tv_usec / 1000000.0);
 
-	rc = pthread_create(&threads[0], NULL, pushTask, (void *)key.c_str());
+	rc = pthread_create(&threads[0], NULL, pushTask, (void *) key.c_str());
 
-	if (rc)
-	{
+	if (rc) {
 		cout << "Error:unable to create thread," << rc << endl;
 		exit(-1);
 	}
 
-	rc = pthread_create(&threads[1], NULL, getResult, (void *)key.c_str());
+	rc = pthread_create(&threads[1], NULL, getResult, (void *) key.c_str());
 
-	if (rc)
-	{
+	if (rc) {
 		cout << "Error:unable to create thread," << rc << endl;
 		exit(-1);
 	}
 
-	for(i = 0; i < 2; i++)
-	{
+	for (i = 0; i < 2; i++) {
 		pthread_join(threads[i], NULL);
 	}
 
 	gettimeofday(&t, NULL);
-	e_t = t.tv_sec+(t.tv_usec/1000000.0);
+	e_t = t.tv_sec + (t.tv_usec / 1000000.0);
 	t_t = e_t - s_t;
 	end = clock();
 
@@ -189,8 +179,7 @@ void startClient()
 	cout << "########################################################" << endl;
 }
 
-int main(int argc, char **argv) 
-{
+int main(int argc, char **argv) {
 	extern char *optarg;
 
 	int printHelp = 0;
@@ -199,10 +188,8 @@ int main(int argc, char **argv)
 	string fileName = "";
 
 	int c;
-	while ((c = getopt(argc, argv, "z:n:w:h")) != -1) 
-	{
-		switch (c) 
-		{
+	while ((c = getopt(argc, argv, "z:n:w:h")) != -1) {
+		switch (c) {
 		case 'z':
 			zhtConf = string(optarg);
 			break;
@@ -256,17 +243,16 @@ int main(int argc, char **argv)
 	}
 }
 
-void openFile(const string &fileName)
-{
+void openFile(const string &fileName) {
 	string size, read, cmd;
 	int i = 0, rc;
 
 	cout << "fileName: " << fileName.c_str() << endl;
 	cout << "Splitting files ..." << endl;
 
-	cmd = "split -l 1000 "+ fileName;
+	cmd = "split -l 1000 " + fileName;
 	//rc = system("mkdir /home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/script/fusion_mount/inputs");
-	chdir("/home/arihant/Documents/Workspace/DIC/Code/CloudKonPlus/script/fusion_mount");
+	chdir("/home/ubuntu/CloudKonPlus/script/fusion_mount");
 
 	rc = system(cmd.c_str());
 
@@ -276,39 +262,33 @@ void openFile(const string &fileName)
 	taskKey = 1;
 }
 
-void printUsage(char *argv_0) 
-{
-	fprintf(stdout, "Usage:\n%s %s\n", argv_0, "-z zht.conf -n neighbor.conf -w <fileName> [-h(help)]");
+void printUsage(char *argv_0) {
+	fprintf(stdout, "Usage:\n%s %s\n", argv_0,
+			"-z zht.conf -n neighbor.conf -w <fileName> [-h(help)]");
 }
 
-void error(const char *msg)
-{
-    perror(msg);
-    exit(1);
+void error(const char *msg) {
+	perror(msg);
+	exit(1);
 }
 
-void test_lookup() 
-{
+void test_lookup() {
 	string key = "response";
 	string result = "y";
 	int rc;
 
-	while(result != "q")
-	{
+	while (result != "q") {
 		rc = zc.lookup(key, result);
 
-		if (rc == 0)
-		{
+		if (rc == 0) {
 			printf("LOOKUP OK, rc(%d), value={%s}\n", rc, result.c_str());
 			zc.remove(key);
-		}
-		else
+		} else
 			sleep(30);
-	}	
+	}
 }
 
-void test_push()
-{
+void test_push() {
 	int i = 1;
 
 	char intstr[10];
@@ -318,68 +298,35 @@ void test_push()
 	string val = "y";
 	string result;
 
-	while(i <= 10000)
-	{
+	while (i <= 10000) {
 		//printf("Enter the value to be pushed,(Enter \"q\" Quit) Value = ");
 		//cin>>val;
 		cout << "UUID: " << uuid << endl;
-		int rc = zc.push(uuid, uuid,"q1", result);
+		int rc = zc.push(uuid, uuid, "q1", result);
 
-		if (rc == 0)
-		{
+		if (rc == 0) {
 			i = i + 1;
 			sprintf(intstr, "%d", i);
 			uuid = string(intstr);
 
 			printf("PUSH OK, rc(%d)\n", rc);
-		}
-		else
+		} else
 			printf("PUSH ERR, rc(%d)\n", rc);
 	}
 }
 
-string exec(string cmd)
-{
+string exec(string cmd) {
 	int i;
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) return "ERROR";
+	FILE* pipe = popen(cmd.c_str(), "r");
+	if (!pipe)
+		return "ERROR";
 
-    char buffer[10];
-    string result = "";
+	char buffer[10];
+	string result = "";
 
-    while(fgets(buffer, 10, pipe) != NULL)
-			result += buffer;
+	while (fgets(buffer, 10, pipe) != NULL)
+		result += buffer;
 
-    pclose(pipe);
-    return result;
+	pclose(pipe);
+	return result;
 }
-
-/*
-int mac = system("ifconfig eth0 | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'");
-char intstr[10];
-sprintf(intstr, "%d", mac);
-string key = exec("ifconfig eth0 | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}'");
-
-while ( getline(infile, task) )
-{
-	cout << "Task: " << task << "\n";
-
-	system(task.c_str());
-}
-
-string exec(string cmd) 
-{
-	int i;
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) return "ERROR";
-
-    char buffer[10];
-    string result = "";
-
-    while(fgets(buffer, 10, pipe) != NULL)
-			result += buffer;
-
-    pclose(pipe);
-    return result;
-}
-*/
