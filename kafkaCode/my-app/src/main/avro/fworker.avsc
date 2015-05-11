@@ -1,0 +1,12 @@
+{
+"namespace":"kafka.examples",
+"type":"record",
+"name":"Worker",
+"fields": [
+	{"name":"worker_name","type":"string"},
+	{"name":"worker_id","type":"string"},
+	{"name":"tags","type":["null",{"type":"array","items":"string"}]},
+	{"name":"state","type":"string"},
+	{"name":"timestamp","type":"long"}
+	]
+}
