@@ -107,13 +107,13 @@ Assuming that you installed them to default directory, possibly that is, /usr/lo
 1. cd to CloudKonPlus/script
 2. run ./start_service.sh
 
--------------------RUN Monitoring Server-------------------
-1. cd to CloudKonPlus/kafkaCode/my-app
-2. Follow ReamMe
+#-------------------RUN Monitoring Server-------------------
+-1. cd to CloudKonPlus/kafkaCode/my-app
+-2. Follow ReamMe
 
--------------------RUN CloudKonPlus Worker-------------------
-1. cd to CloudKonPlus/script
-2. run ./start.sh
+#-------------------RUN CloudKonPlus Worker-------------------
+-1. cd to CloudKonPlus/script
+-2. run ./start.sh
 
 -------------------RUN CloudKonPlus Client-------------------
 1. cd to CloudKonPlus/src/cloudkonplus
