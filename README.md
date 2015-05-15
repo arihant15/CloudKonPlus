@@ -1,7 +1,7 @@
 # CloudKonPlus
 CloudKonPlus
 
-------------------- SOFTWARE REQUIREMENTS -------------------
+### SOFTWARE REQUIREMENTS -------------------
 
 1. Google protocol buffers c++ binding, VERSION 2.4.1
 		http://code.google.com/p/protobuf/downloads/list
@@ -107,27 +107,27 @@ Assuming that you installed them to default directory, possibly that is, /usr/lo
 1. cd to CloudKonPlus/script
 2. run ./start_service.sh
 
-#-------------------RUN Monitoring Server-------------------
--1. cd to CloudKonPlus/kafkaCode/my-app
--2. Follow ReamMe
+###RUN Monitoring Server-------------------
+	1. cd to CloudKonPlus/kafkaCode/my-app
+	2. Follow ReamMe
 
-#-------------------RUN CloudKonPlus Worker-------------------
--1. cd to CloudKonPlus/script
--2. run ./start.sh
+###RUN CloudKonPlus Worker-------------------
+	1. cd to CloudKonPlus/script
+	2. run ./start.sh
 
--------------------RUN CloudKonPlus Client-------------------
-1. cd to CloudKonPlus/src/cloudkonplus
-2. $ ./ckp_client -z ../../conf/zht.conf -n ../../conf/neighbor.conf -w ../../TestCase/Throughput/sleep_0_10k.txt
+###RUN CloudKonPlus Client-------------------
+	1. cd to CloudKonPlus/src/cloudkonplus
+	2. $ ./ckp_client -z ../../conf/zht.conf -n ../../conf/neighbor.conf -w ../../TestCase/Throughput/sleep_0_10k.txt
 
--------------------RUN WordCount Worker-------------------
-1. cd to CloudKonPlus/script
-2. run ./start_wc.sh
+###RUN WordCount Worker-------------------
+	1. cd to CloudKonPlus/script
+	2. run ./start_wc.sh
 
--------------------RUN WordCount Client-------------------
+###RUN WordCount Client-------------------
 1. cd to CloudKonPlus/src/wordcount
 2. $ ./wc_client -z ../../conf/zht.conf -n ../../conf/neighbor.conf -w CloudKonPlus/TestCase/wordcount/5mb.txt
 
--------------------RUN Stop Service-------------------
+###RUN Stop Service-------------------
 1. cd to CloudKonPlus/script
 2. run ./stop.sh
 3. run ./stop_service.sh
